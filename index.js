@@ -5,7 +5,14 @@ const registerRoute = require('./routes/register');
 const app = express();
 const PORT = process.env.PORT || 5010;
 
-app.use(cors());
+const corsOptions = {
+    origin: 'https://empowerspeech.netlify.app',
+    methods: ['GET', 'POST'],
+    credentials: true,
+};
+
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/api/register', registerRoute);
