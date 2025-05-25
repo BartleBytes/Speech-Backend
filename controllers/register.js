@@ -1,9 +1,23 @@
+const { body, validationResult } = require('express-validator')
 const fs = require('fs');
 const path = require('path');
 
 const dataPath = path.join(__dirname, '../data/registrations.json');
 
+const validateRegistration = [
+  body('childName').trim().notEmpty().withMessage('Child name is required'),
+  body('age').isInt({min: 4, max:18 }).withMessage('Age must be between 4-18'),
+  body('parentName').trim().notEmpty().withMessage('Parent name is required'),
+  body('email').isEmail().normalizeEmail().withMessage('Valid email is required')
+
+];
+
 function handleRegistration(req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({errors: errors.array() });
+  }
+
   const registration = req.body;
 
   if (!registration.childName || !registration.age || !registration.parentName || !registration.email) {
@@ -37,4 +51,5 @@ function getRegistrations(req, res) {
 module.exports = {
   handleRegistration,
   getRegistrations,
+  validateRegistration
 };
